@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_services_tms" model="ir.sequence">
+            <field name="name">Pedidos Operarios</field>
+            <field name="code">pedidos.operarios</field>
+            <field name="active">True</field>
+            <field name="prefix">Pedido - </field>
+            <field name="padding">4</field>
+            <field name="implementation">standard</field>
+        </record>
+    </data>
+
+</odoo>

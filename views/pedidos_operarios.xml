@@ -1,0 +1,168 @@
+<odoo>
+    <!-- Menu elements -->
+    <menuitem id="tms_root" name="Pedidos Operarios" web_icon="pedidos_operarios,static/description/icon.png"/>
+
+
+    <record id="pedidos_operarios_tree" model="ir.ui.view">
+        <field name="name">pedidos.operarios.tree</field>
+        <field name="model">pedidos.operarios</field>
+        <field name="arch" type="xml">
+            <tree string="Pedidos Operarios">
+                <field name="name" string="N° Pedido"/>
+                <field name="fecha_pedido"/>
+                <field name="supervisor_id"/>
+                <field name="pedidos_ids" widget="many2many_tags"/>
+                <field name="estado"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="pedidos_operarios_confirmados_tree" model="ir.ui.view">
+        <field name="name">pedidos.operarios.confirmados.tree</field>
+        <field name="model">pedidos.operarios</field>
+        <field name="arch" type="xml">
+            <tree string="Pedidos Operarios">
+                <field name="name" string="N° Pedido"/>
+                <field name="fecha_pedido"/>
+                <field name="supervisor_id"/>
+                <field name="pedidos_ids" widget="many2many_tags"/>
+                <field name="estado"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="pedidos_operarios_form" model="ir.ui.view">
+        <field name="name">pedidos.operarios.form</field>
+        <field name="model">pedidos.operarios</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+		            <button string="Enviar solicitud" type="object" class="btn btn-secondary" name="mail_operario_supervisor" attrs="{'invisible': [('estado','!=','espera')]}"/>
+                    <button string="En Espera" name="estado_en_espera" type="object" class="btn btn-info" groups="pedidos_operarios.group_purchase_solicitud_supervisor"  attrs="{'invisible': [('estado','=','espera')]}"/>
+                    <button string="Aprobado" name="estado_aprobado" type="object" class="btn btn-success" groups="pedidos_operarios.group_purchase_solicitud_supervisor"  attrs="{'invisible': [('estado','=','confirmado')]}"/>
+                    <button string="Rechazado" name="estado_rechazado" type="object" class="btn btn-danger" groups="pedidos_operarios.group_purchase_solicitud_supervisor" attrs="{'invisible': [('estado','=','rechazado')]}"/>
+                    <button string="Enviar Correo a Compras" name="mail_supervisor_compras" type="object" class="btn btn-secondary" groups="pedidos_operarios.group_purchase_solicitud_supervisor" attrs="{'invisible': [('email_enviado_sup','=',True)]}"/>
+                    <field name="estado" widget="statusbar" statusbar_visible="espera,confirmado,rechazado"/>
+                </header>
+                <sheet string="Pedidos Operarios">
+                    <div class="oe_button_box" name="button_box" groups="pedidos_operarios.group_purchase_solicitud_administrador">
+                        <button class="oe_stat_button" type="object" name="act_show_purchases" icon="fa-usd">
+                            <div class="o_form_field o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="total_purchases" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                </span>
+                                <span class="o_stat_text">Orden Compra</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div>
+                        <h2>
+                            <field name="name" decoration-bf="name"/>
+                            <field name="current_user" invisible="True"/>
+                        </h2>
+                    </div>
+                    <group>
+                        <field name="fecha_pedido" string="Fecha" attrs="{'readonly':[('estado','!=','espera')]}"/>
+                        <field name="user_id" string="Operario" groups="pedidos_operarios.group_purchase_solicitud_supervisor" attrs="{'readonly':[('estado','!=','espera')]}" domain="[('tipo','=','operario')]"/>
+                        <field name="supervisor_id" string="Supervisor" attrs="{'readonly':[('estado','!=','espera')]}" domain="[('tipo','=','supervisor')]"/>
+                        <field name="email_enviado"/>
+                        <field name="email_enviado_sup" groups="pedidos_operarios.group_purchase_solicitud_supervisor"/>
+                    </group>
+
+                    <field name="pedidos_ids" nolabel="1" attrs="{'readonly':[('estado','!=','espera')]}">
+                        <tree editable="buttom">
+                            <field name="name"/>
+                            <field name="comentario"/>
+                            <field name="cantidad"/>
+                            <field name="ref_pedidos" invisible="True"/>
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pedidos_operarios_espera" model="ir.actions.act_window">
+        <field name="name">Pedidos Operarios</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">pedidos.operarios</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('estado','=','espera')]</field>
+        <field name="view_id" ref="pedidos_operarios.pedidos_operarios_tree" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+            Crear Pedido!
+            </p>
+        </field>
+    </record>
+
+    <record id="action_pedidos_operarios_confirmado" model="ir.actions.act_window">
+        <field name="name">Pedidos Operarios</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">pedidos.operarios</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('estado','=','confirmado')]</field>
+        <field name="view_id" ref="pedidos_operarios.pedidos_operarios_confirmados_tree" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+            Crear Pedido!
+            </p>
+        </field>
+    </record>
+
+
+    <record id="producto_supervisor_tree" model="ir.ui.view">
+        <field name="name">product.template.pedidos.tree</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <tree string="Productos" create="1" editable="bottom">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_create_product_supervisor" model="ir.actions.act_window">
+        <field name="name">Productos</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="pedidos_operarios.producto_supervisor_tree" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+            Crear Producto!
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="tms_menu_pedidos_operarios" name="Pedidos Operarios" parent="tms_root" sequence="1"/>
+
+    <menuitem id="tms_label_pedidos_operarios" name="Pedidos" parent="tms_menu_pedidos_operarios"/>
+
+    <menuitem id="tms_action_pedidos_operarios" name="Pedidos en espera" parent="tms_label_pedidos_operarios" action="action_pedidos_operarios_espera" sequence="1"/>
+
+    <menuitem id="tms_action_pedidos_operarios_confirmados" name="Pedidos confirmados" parent="tms_label_pedidos_operarios" action="action_pedidos_operarios_confirmado" sequence="2"/>
+
+    <menuitem id="tms_action_pedidos_operarios_productos" name="Productos" parent="tms_label_pedidos_operarios" action="action_create_product_supervisor" groups="pedidos_operarios.group_purchase_solicitud_supervisor" sequence="3"/> 
+
+
+
+    <record model="ir.ui.view" id="tipo_usuario_pedidos_form">
+        <field name="name">Usuarios</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='login']" position="after">
+                <label for="tipo" class="oe_edit_only"/>
+                <h3>
+                    <field name="tipo"/>
+                </h3>
+            </xpath>
+
+        </field>
+    </record>
+
+
+
+</odoo>

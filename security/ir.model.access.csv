@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pedidos_operarios,access.pedidos.operarios,model_pedidos_operarios,pedidos_operarios.group_purchase_solicitud_supervisor,1,1,1,1
+access_linea_pedidos_operarios,access.linea.pedidos.operarios,model_linea_pedidos_operarios,pedidos_operarios.group_purchase_solicitud_supervisor,1,1,1,1
+access_pedidos_operarios,access.pedidos.operarios,model_pedidos_operarios,pedidos_operarios.group_purchase_solicitud_operario,1,1,1,0
+access_linea_pedidos_operarios,access.linea.pedidos.operarios,model_linea_pedidos_operarios,pedidos_operarios.group_purchase_solicitud_operario,1,1,1,1
